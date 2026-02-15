@@ -47,8 +47,27 @@ type ServerConfig struct {
 	Proxy *proxy.Client // client, or nil; controlled by the -proxy flag
 }
 
+// buildResult holds the intermediate results of building a server,
+// exposing the getters and modules for use by static site generation.
+type buildResult struct {
+	Server     *frontend.Server
+	Getters    []fetch.ModuleGetter
+	AllModules []frontend.LocalModule
+}
+
 // BuildServer builds a *frontend.Server using the given configuration.
 func BuildServer(ctx context.Context, serverCfg ServerConfig) (*frontend.Server, error) {
+	result, err := buildServerAndGetters(ctx, serverCfg)
+	if err != nil {
+		return nil, err
+	}
+	return result.Server, nil
+}
+
+// buildServerAndGetters builds the server along with the getters and module
+// list used to construct it. This is used by both BuildServer and
+// GenerateStaticSite.
+func buildServerAndGetters(ctx context.Context, serverCfg ServerConfig) (*buildResult, error) {
 	if len(serverCfg.Paths) == 0 && !serverCfg.UseCache && serverCfg.Proxy == nil {
 		serverCfg.Paths = []string{"."}
 	}
@@ -115,7 +134,15 @@ func BuildServer(ctx context.Context, serverCfg ServerConfig) (*frontend.Server,
 		return allModules[i].ModulePath < allModules[j].ModulePath
 	})
 
-	return newServer(getters, allModules, cfg.proxy, serverCfg.GoDocMode, serverCfg.DevMode, serverCfg.DevModeStaticDir)
+	server, err := newServer(getters, allModules, cfg.proxy, serverCfg.GoDocMode, serverCfg.DevMode, serverCfg.DevModeStaticDir)
+	if err != nil {
+		return nil, err
+	}
+	return &buildResult{
+		Server:     server,
+		Getters:    getters,
+		AllModules: allModules,
+	}, nil
 }
 
 // getModuleDirs returns the set of workspace modules for each directory,
