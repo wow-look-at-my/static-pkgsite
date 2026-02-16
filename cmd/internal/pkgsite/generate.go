@@ -14,9 +14,10 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"regexp"
 	"sort"
 	"strings"
+
+	"golang.org/x/net/html"
 
 	"github.com/wow-look-at-my/static-pkgsite/internal/fetch"
 	"github.com/wow-look-at-my/static-pkgsite/internal/frontend"
@@ -25,10 +26,9 @@ import (
 	thirdparty "github.com/wow-look-at-my/static-pkgsite/third_party"
 )
 
-// cspMeta is the Content-Security-Policy meta tag injected into every generated
-// HTML page. It forbids all off-domain resource loading.
-const cspMeta = `<meta http-equiv="Content-Security-Policy" content="` +
-	`default-src 'self'; ` +
+// cspContent is the Content-Security-Policy directive value injected into
+// every generated HTML page.
+const cspContent = `default-src 'self'; ` +
 	`script-src 'self' 'unsafe-inline'; ` +
 	`style-src 'self' 'unsafe-inline'; ` +
 	`img-src 'self' data:; ` +
@@ -36,8 +36,7 @@ const cspMeta = `<meta http-equiv="Content-Security-Policy" content="` +
 	`connect-src 'none'; ` +
 	`frame-src 'none'; ` +
 	`object-src 'none'; ` +
-	`base-uri 'none'` +
-	`">`
+	`base-uri 'none'`
 
 // GenerateStaticSite generates a fully static HTML/CSS/JS site into outDir
 // using the same server infrastructure as the dynamic mode. The output can be
@@ -175,11 +174,14 @@ func renderAndWriteN(mux *http.ServeMux, urlPath, outDir string, depth int) erro
 
 	body := w.Body.Bytes()
 
-	// Inject CSP meta tag and relativize paths in HTML responses.
+	// For HTML responses, parse the DOM, inject CSP, and relativize paths.
 	contentType := w.Header().Get("Content-Type")
 	if strings.Contains(contentType, "text/html") || contentType == "" {
-		body = injectCSP(body)
-		body = absoluteToRelativeHTML(body, urlPath)
+		processed, err := processHTML(body, urlPath)
+		if err != nil {
+			return fmt.Errorf("processing HTML for %s: %w", urlPath, err)
+		}
+		body = processed
 	}
 
 	// Determine output file path.
@@ -207,37 +209,6 @@ func urlPathToFilePath(urlPath, outDir string) string {
 	return filepath.Join(outDir, filepath.FromSlash(clean), "index.html")
 }
 
-// injectCSP inserts a Content-Security-Policy meta tag into the <head> of an
-// HTML document. This ensures that even if the static site is served without
-// server-side headers, no off-domain resources can be loaded.
-func injectCSP(html []byte) []byte {
-	// Insert after <head> (or <head ...>).
-	idx := bytes.Index(html, []byte("<head>"))
-	if idx >= 0 {
-		insertion := idx + len("<head>")
-		return bytes.Join([][]byte{
-			html[:insertion],
-			[]byte("\n    " + cspMeta),
-			html[insertion:],
-		}, nil)
-	}
-	// Try <head with attributes.
-	idx = bytes.Index(html, []byte("<head "))
-	if idx >= 0 {
-		// Find the closing >.
-		end := bytes.IndexByte(html[idx:], '>')
-		if end >= 0 {
-			insertion := idx + end + 1
-			return bytes.Join([][]byte{
-				html[:insertion],
-				[]byte("\n    " + cspMeta),
-				html[insertion:],
-			}, nil)
-		}
-	}
-	return html
-}
-
 // relativePrefix returns the "../" prefix needed to navigate from a page at
 // urlPath back to the site root. Pages are written as directory/index.html,
 // so /about becomes /about/index.html (depth 1), /net/http becomes
@@ -257,40 +228,82 @@ func relativePrefix(urlPath string) string {
 	return strings.Repeat("../", depth)
 }
 
-// attrAbsPathRe matches href, src, or action attributes whose value is an
-// absolute path. Group 1 captures the attribute and opening quote, group 2
-// captures the path (without leading slash). Protocol-relative URLs (//...)
-// are excluded by requiring [^/] after the slash.
-var attrAbsPathRe = regexp.MustCompile(`((?:href|src|action)\s*=\s*["'])/([^/"'][^"']*)`)
+// processHTML parses the HTML document, injects a Content-Security-Policy
+// meta tag into <head>, and rewrites all absolute URL paths to relative
+// paths based on the page's depth in the URL hierarchy.
+func processHTML(content []byte, urlPath string) ([]byte, error) {
+	prefix := relativePrefix(urlPath)
 
-// absoluteToRelativeHTML converts absolute URL paths in HTML content to
-// relative paths based on the page's position in the URL hierarchy.
-// This makes the generated site work when served from any directory.
-func absoluteToRelativeHTML(content []byte, urlPath string) []byte {
-	prefix := []byte(relativePrefix(urlPath))
+	doc, err := html.Parse(bytes.NewReader(content))
+	if err != nil {
+		return nil, fmt.Errorf("parsing HTML: %w", err)
+	}
 
-	// Rewrite href="/about" → href="../about", src="/static/x" → src="../static/x", etc.
-	content = attrAbsPathRe.ReplaceAll(content, append([]byte("$1"), append(prefix, []byte("$2")...)...))
+	walkNodes(doc, prefix)
 
-	// Rewrite root path references: href="/" → href="../" (or "./" for the root page).
-	for _, attr := range []string{"href", "src", "action"} {
-		for _, q := range []string{`"`, `'`} {
-			old := []byte(attr + "=" + q + "/" + q)
-			repl := []byte(attr + "=" + q + string(prefix) + q)
-			content = bytes.ReplaceAll(content, old, repl)
+	var buf bytes.Buffer
+	if err := html.Render(&buf, doc); err != nil {
+		return nil, fmt.Errorf("rendering HTML: %w", err)
+	}
+	return buf.Bytes(), nil
+}
+
+// walkNodes recursively walks the HTML node tree, rewriting absolute URL
+// attribute values to relative paths and injecting the CSP meta tag.
+func walkNodes(n *html.Node, prefix string) {
+	if n.Type == html.ElementNode {
+		// Rewrite URL-valued attributes from absolute to relative paths.
+		for i, a := range n.Attr {
+			if isURLAttr(a.Key) && strings.HasPrefix(a.Val, "/") && !strings.HasPrefix(a.Val, "//") {
+				n.Attr[i].Val = prefix + a.Val[1:]
+			}
+		}
+
+		// Inject CSP <meta> as the first child of <head>.
+		if n.Data == "head" {
+			meta := &html.Node{
+				Type: html.ElementNode,
+				Data: "meta",
+				Attr: []html.Attribute{
+					{Key: "http-equiv", Val: "Content-Security-Policy"},
+					{Key: "content", Val: cspContent},
+				},
+			}
+			n.InsertBefore(meta, n.FirstChild)
+		}
+
+		// Rewrite absolute paths inside inline <script> text.
+		if n.Data == "script" {
+			for c := n.FirstChild; c != nil; c = c.NextSibling {
+				if c.Type == html.TextNode {
+					c.Data = relativizeScriptText(c.Data, prefix)
+				}
+			}
 		}
 	}
 
-	// Rewrite non-attribute contexts: loadScript("/static/..."), loadScript("/third_party/...").
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		walkNodes(c, prefix)
+	}
+}
+
+// isURLAttr reports whether the given attribute name typically contains a URL.
+func isURLAttr(attr string) bool {
+	switch attr {
+	case "href", "src", "action", "poster", "data":
+		return true
+	}
+	return false
+}
+
+// relativizeScriptText rewrites absolute path string literals inside inline
+// JavaScript. This handles patterns like loadScript("/static/...").
+func relativizeScriptText(script, prefix string) string {
 	for _, dir := range []string{"/static/", "/third_party/"} {
-		for _, q := range []byte{'"', '\''} {
-			old := append([]byte{q}, []byte(dir)...)
-			repl := append([]byte{q}, append(prefix, []byte(dir[1:])...)...)
-			content = bytes.ReplaceAll(content, old, repl)
-		}
+		script = strings.ReplaceAll(script, `"`+dir, `"`+prefix+dir[1:])
+		script = strings.ReplaceAll(script, `'`+dir, `'`+prefix+dir[1:])
 	}
-
-	return content
+	return script
 }
 
 // absoluteToRelativeAsset converts absolute URL path references in CSS and JS
@@ -308,21 +321,16 @@ func absoluteToRelativeAsset(content []byte, filePath string) []byte {
 	if dir != "." {
 		depth = strings.Count(dir, "/") + 1
 	}
-	prefix := []byte(strings.Repeat("../", depth))
+	prefix := strings.Repeat("../", depth)
 
+	s := string(content)
 	for _, dir := range []string{"/static/", "/third_party/"} {
-		for _, q := range []byte{'"', '\''} {
-			old := append([]byte{q}, []byte(dir)...)
-			repl := append([]byte{q}, append(prefix, []byte(dir[1:])...)...)
-			content = bytes.ReplaceAll(content, old, repl)
-		}
+		s = strings.ReplaceAll(s, `"`+dir, `"`+prefix+dir[1:])
+		s = strings.ReplaceAll(s, `'`+dir, `'`+prefix+dir[1:])
 		// CSS url() without quotes: url(/static/...)
-		old := append([]byte("("), []byte(dir)...)
-		repl := append([]byte("("), append(prefix, []byte(dir[1:])...)...)
-		content = bytes.ReplaceAll(content, old, repl)
+		s = strings.ReplaceAll(s, "("+dir, "("+prefix+dir[1:])
 	}
-
-	return content
+	return []byte(s)
 }
 
 // copyEmbeddedFS recursively copies all files from an embedded filesystem
