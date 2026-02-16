@@ -76,7 +76,6 @@ var (
 	useProxy   = flag.Bool("proxy", false, "fetch from GOPROXY if not found locally")
 	openFlag   = flag.Bool("open", false, "open a browser window to the server's address")
 	outDir   = flag.String("out", "", "output directory for static site generation (generates static HTML/CSS/JS instead of starting a server)")
-	basePath = flag.String("base-path", "/", "base URL path prefix for the generated site (e.g., /repo-name/ for GitHub Pages project sites)")
 	// other flags are bound to ServerConfig below
 )
 
@@ -128,7 +127,7 @@ func main() {
 
 	// Static site generation mode.
 	if *outDir != "" {
-		if err := pkgsite.GenerateStaticSite(ctx, serverCfg, *outDir, *basePath); err != nil {
+		if err := pkgsite.GenerateStaticSite(ctx, serverCfg, *outDir); err != nil {
 			dief("%s", err)
 		}
 		return
