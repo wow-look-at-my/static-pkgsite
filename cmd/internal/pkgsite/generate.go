@@ -13,6 +13,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -40,7 +41,23 @@ const cspMeta = `<meta http-equiv="Content-Security-Policy" content="` +
 // GenerateStaticSite generates a fully static HTML/CSS/JS site into outDir
 // using the same server infrastructure as the dynamic mode. The output can be
 // served by any static file server with no Go backend required.
-func GenerateStaticSite(ctx context.Context, serverCfg ServerConfig, outDir string) error {
+//
+// basePath controls the URL path prefix for the generated site. When serving
+// from the root of a domain, basePath should be "/". When serving from a
+// subpath (e.g., GitHub Pages project sites), basePath should be "/<repo>/".
+// All absolute URL references in the generated HTML, CSS, and JS are rewritten
+// to include this prefix.
+func GenerateStaticSite(ctx context.Context, serverCfg ServerConfig, outDir, basePath string) error {
+	// Normalize base path to always have leading and trailing slashes.
+	if basePath == "" {
+		basePath = "/"
+	}
+	if !strings.HasPrefix(basePath, "/") {
+		basePath = "/" + basePath
+	}
+	if !strings.HasSuffix(basePath, "/") {
+		basePath = basePath + "/"
+	}
 	// Build the server and get the getters/modules for package enumeration.
 	result, err := buildServerAndGetters(ctx, serverCfg)
 	if err != nil {
@@ -71,14 +88,14 @@ func GenerateStaticSite(ctx context.Context, serverCfg ServerConfig, outDir stri
 
 	// Render the homepage.
 	progress("/")
-	if err := renderAndWrite(mux, "/", outDir); err != nil {
+	if err := renderAndWrite(mux, "/", outDir, basePath); err != nil {
 		return fmt.Errorf("rendering homepage: %w", err)
 	}
 
 	// Render static informational pages.
 	for _, p := range staticPages {
 		progress(p)
-		if err := renderAndWrite(mux, p, outDir); err != nil {
+		if err := renderAndWrite(mux, p, outDir, basePath); err != nil {
 			log.Errorf(ctx, "rendering %s: %v", p, err)
 		}
 	}
@@ -87,17 +104,18 @@ func GenerateStaticSite(ctx context.Context, serverCfg ServerConfig, outDir stri
 	for _, p := range paths {
 		urlPath := "/" + p
 		progress(urlPath)
-		if err := renderAndWrite(mux, urlPath, outDir); err != nil {
+		if err := renderAndWrite(mux, urlPath, outDir, basePath); err != nil {
 			log.Errorf(ctx, "rendering %s: %v", urlPath, err)
 		}
 	}
 
-	// Copy static assets.
+	// Copy static assets, rewriting absolute paths in CSS/JS files.
 	fmt.Fprintf(os.Stderr, "Copying static assets...\n")
-	if err := copyEmbeddedFS(static.FS, ".", filepath.Join(outDir, "static")); err != nil {
+	rewriter := newBasePathRewriter(basePath)
+	if err := copyEmbeddedFS(static.FS, ".", filepath.Join(outDir, "static"), rewriter); err != nil {
 		return fmt.Errorf("copying static assets: %w", err)
 	}
-	if err := copyEmbeddedFS(thirdparty.FS, ".", filepath.Join(outDir, "third_party")); err != nil {
+	if err := copyEmbeddedFS(thirdparty.FS, ".", filepath.Join(outDir, "third_party"), rewriter); err != nil {
 		return fmt.Errorf("copying third_party assets: %w", err)
 	}
 
@@ -140,12 +158,13 @@ func enumerateUnitPaths(ctx context.Context, getters []fetch.ModuleGetter, modul
 
 // renderAndWrite renders the given URL path using the mux and writes the
 // response body to the appropriate file under outDir. For HTML responses,
-// it injects a strict Content-Security-Policy meta tag.
-func renderAndWrite(mux *http.ServeMux, urlPath, outDir string) error {
-	return renderAndWriteN(mux, urlPath, outDir, 0)
+// it injects a strict Content-Security-Policy meta tag and rewrites absolute
+// URL paths to include the base path prefix.
+func renderAndWrite(mux *http.ServeMux, urlPath, outDir, basePath string) error {
+	return renderAndWriteN(mux, urlPath, outDir, basePath, 0)
 }
 
-func renderAndWriteN(mux *http.ServeMux, urlPath, outDir string, depth int) error {
+func renderAndWriteN(mux *http.ServeMux, urlPath, outDir, basePath string, depth int) error {
 	if depth > 5 {
 		return fmt.Errorf("too many redirects for %s", urlPath)
 	}
@@ -158,7 +177,7 @@ func renderAndWriteN(mux *http.ServeMux, urlPath, outDir string, depth int) erro
 	if w.Code == http.StatusMovedPermanently || w.Code == http.StatusFound {
 		loc := w.Header().Get("Location")
 		if loc != "" {
-			return renderAndWriteN(mux, loc, outDir, depth+1)
+			return renderAndWriteN(mux, loc, outDir, basePath, depth+1)
 		}
 	}
 
@@ -168,10 +187,11 @@ func renderAndWriteN(mux *http.ServeMux, urlPath, outDir string, depth int) erro
 
 	body := w.Body.Bytes()
 
-	// Inject CSP meta tag into HTML responses.
+	// Inject CSP meta tag and rewrite paths in HTML responses.
 	contentType := w.Header().Get("Content-Type")
 	if strings.Contains(contentType, "text/html") || contentType == "" {
 		body = injectCSP(body)
+		body = rewriteAbsolutePathsInHTML(body, basePath)
 	}
 
 	// Determine output file path.
@@ -230,9 +250,94 @@ func injectCSP(html []byte) []byte {
 	return html
 }
 
+// basePathRewriter rewrites absolute URL paths in file content to include
+// a base path prefix. This is needed when serving the static site from a
+// subpath (e.g., GitHub Pages project sites).
+type basePathRewriter struct {
+	basePath string
+}
+
+func newBasePathRewriter(basePath string) *basePathRewriter {
+	if basePath == "/" {
+		return nil // no rewriting needed
+	}
+	return &basePathRewriter{basePath: basePath}
+}
+
+// attrAbsPathRe matches href, src, or action attributes whose value starts
+// with an absolute path (e.g., href="/about"). It captures the attribute
+// prefix (group 1) and the first path character (group 2). Protocol-relative
+// URLs like href="//..." are not matched because [^/"'] excludes "/".
+var attrAbsPathRe = regexp.MustCompile(`((?:href|src|action)\s*=\s*["'])/([^/"'])`)
+
+// rewriteAbsolutePathsInHTML rewrites absolute URL paths in HTML content
+// to include the base path prefix. It handles href/src/action attributes,
+// inline script URL strings, and other common patterns.
+func rewriteAbsolutePathsInHTML(content []byte, basePath string) []byte {
+	if basePath == "/" {
+		return content
+	}
+	bp := []byte(basePath)
+
+	// Step 1: Rewrite href/src/action attributes that point to absolute
+	// paths (e.g., href="/about", src="/static/..."). This must run first
+	// so that the simpler string replacements in step 2 don't double-match
+	// already-rewritten attribute values.
+	content = attrAbsPathRe.ReplaceAll(content, append([]byte("$1"), append(bp, []byte("$2")...)...))
+
+	// Handle root path references: href="/" → href="/base-path/"
+	for _, attr := range []string{"href", "src", "action"} {
+		for _, q := range []string{`"`, `'`} {
+			old := []byte(attr + "=" + q + "/" + q)
+			repl := []byte(attr + "=" + q + basePath + q)
+			content = bytes.ReplaceAll(content, old, repl)
+		}
+	}
+
+	// Step 2: Replace well-known absolute path prefixes in non-attribute
+	// contexts (e.g., loadScript("/static/...") in inline scripts). After
+	// step 1 rewrites attribute values, these patterns only remain in
+	// non-attribute positions, so there is no double-replacement risk.
+	for _, prefix := range []string{"/static/", "/third_party/", "/favicon.ico"} {
+		for _, q := range []byte{'"', '\''} {
+			old := append([]byte{q}, []byte(prefix)...)
+			repl := append([]byte{q}, append(bp, []byte(prefix[1:])...)...)
+			content = bytes.ReplaceAll(content, old, repl)
+		}
+	}
+
+	return content
+}
+
+// rewriteAbsolutePathsInAsset rewrites absolute URL path references in
+// CSS and JS files. These files use url() in CSS and string literals in JS
+// to reference other static assets.
+func rewriteAbsolutePathsInAsset(content []byte, basePath string) []byte {
+	if basePath == "/" {
+		return content
+	}
+	bp := []byte(basePath)
+
+	// Replace quoted references: "/static/..." and '/static/...'
+	for _, prefix := range []string{"/static/", "/third_party/"} {
+		for _, q := range []byte{'"', '\''} {
+			old := append([]byte{q}, []byte(prefix)...)
+			repl := append([]byte{q}, append(bp, []byte(prefix[1:])...)...)
+			content = bytes.ReplaceAll(content, old, repl)
+		}
+		// Also handle CSS url() without quotes: url(/static/...)
+		old := append([]byte("("), []byte(prefix)...)
+		repl := append([]byte("("), append(bp, []byte(prefix[1:])...)...)
+		content = bytes.ReplaceAll(content, old, repl)
+	}
+
+	return content
+}
+
 // copyEmbeddedFS recursively copies all files from an embedded filesystem
-// to a destination directory on disk.
-func copyEmbeddedFS(fsys fs.FS, root, destDir string) error {
+// to a destination directory on disk. If rewriter is non-nil, CSS and JS
+// file contents are transformed to rewrite absolute URL paths.
+func copyEmbeddedFS(fsys fs.FS, root, destDir string, rewriter *basePathRewriter) error {
 	return fs.WalkDir(fsys, root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -244,6 +349,12 @@ func copyEmbeddedFS(fsys fs.FS, root, destDir string) error {
 		data, err := fs.ReadFile(fsys, path)
 		if err != nil {
 			return err
+		}
+		if rewriter != nil {
+			ext := filepath.Ext(path)
+			if ext == ".css" || ext == ".js" {
+				data = rewriteAbsolutePathsInAsset(data, rewriter.basePath)
+			}
 		}
 		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 			return err
