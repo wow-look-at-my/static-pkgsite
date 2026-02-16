@@ -27,7 +27,7 @@
         <label class="go-Label">
           URL
           <input name="path" class="go-Input js-toolsPathInput"
-              value="{{if .LinkPath}}https://pkg.go.dev/{{.LinkPath}}{{end}}" placeholder="e.g., https://pkg.go.dev/golang.org/x/pkgsite">
+              value="{{if .LinkPath}}https://pkg.go.dev/{{.LinkPath}}{{end}}" placeholder="e.g., https://pkg.go.dev/github.com/wow-look-at-my/static-pkgsite">
         </label>
         <button type="submit" class="go-Button">{{if .LinkPath}}Update{{else}}Create{{end}}</button>
       </form>

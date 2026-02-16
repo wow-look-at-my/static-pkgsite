@@ -12,10 +12,10 @@ import (
 	"time"
 
 	"golang.org/x/mod/module"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/licenses"
-	"golang.org/x/pkgsite/internal/source"
-	"golang.org/x/pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/licenses"
+	"github.com/wow-look-at-my/static-pkgsite/internal/source"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
 )
 
 const (

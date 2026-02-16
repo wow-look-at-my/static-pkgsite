@@ -12,10 +12,10 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/source"
-	"golang.org/x/pkgsite/internal/testing/sample"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/source"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/sample"
 )
 
 func TestGetNestedModules(t *testing.T) {

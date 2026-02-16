@@ -9,8 +9,8 @@ import (
 	"sort"
 	"strings"
 
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
 )
 
 // Symbol is an element in the package API. A symbol can be a constant,

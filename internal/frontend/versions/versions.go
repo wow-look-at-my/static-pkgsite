@@ -14,13 +14,13 @@ import (
 	"unicode"
 
 	"golang.org/x/mod/semver"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/fetch"
-	"golang.org/x/pkgsite/internal/frontend/serrors"
-	"golang.org/x/pkgsite/internal/log"
-	"golang.org/x/pkgsite/internal/stdlib"
-	"golang.org/x/pkgsite/internal/version"
-	"golang.org/x/pkgsite/internal/vuln"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/fetch"
+	"github.com/wow-look-at-my/static-pkgsite/internal/frontend/serrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal/version"
+	"github.com/wow-look-at-my/static-pkgsite/internal/vuln"
 )
 
 // VersionsDetails contains the hierarchy of version summary information used

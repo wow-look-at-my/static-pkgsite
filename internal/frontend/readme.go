@@ -9,7 +9,7 @@ import (
 
 	"github.com/google/safehtml"
 	"github.com/google/safehtml/uncheckedconversions"
-	"golang.org/x/pkgsite/internal/sanitizer"
+	"github.com/wow-look-at-my/static-pkgsite/internal/sanitizer"
 )
 
 // Heading holds data about a heading and nested headings within a readme.

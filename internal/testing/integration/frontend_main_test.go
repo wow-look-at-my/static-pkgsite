@@ -12,8 +12,8 @@ import (
 	"testing"
 
 	"golang.org/x/net/html"
-	"golang.org/x/pkgsite/internal/postgres"
-	"golang.org/x/pkgsite/internal/testing/htmlcheck"
+	"github.com/wow-look-at-my/static-pkgsite/internal/postgres"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/htmlcheck"
 )
 
 var (

@@ -14,12 +14,12 @@ import (
 	"github.com/Masterminds/squirrel"
 	"github.com/lib/pq"
 	"golang.org/x/mod/semver"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/database"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/log"
-	"golang.org/x/pkgsite/internal/middleware/stats"
-	"golang.org/x/pkgsite/internal/version"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/database"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/middleware/stats"
+	"github.com/wow-look-at-my/static-pkgsite/internal/version"
 	"golang.org/x/sync/errgroup"
 )
 

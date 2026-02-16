@@ -14,7 +14,7 @@ import (
 	"testing"
 
 	"github.com/google/go-replayers/httpreplay"
-	"golang.org/x/pkgsite/internal/source"
+	"github.com/wow-look-at-my/static-pkgsite/internal/source"
 )
 
 var (

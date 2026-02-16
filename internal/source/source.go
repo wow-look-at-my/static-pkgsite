@@ -32,11 +32,11 @@ import (
 	"strings"
 
 	"golang.org/x/net/context/ctxhttp"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/log"
-	"golang.org/x/pkgsite/internal/stdlib"
-	"golang.org/x/pkgsite/internal/trace"
-	"golang.org/x/pkgsite/internal/version"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal/trace"
+	"github.com/wow-look-at-my/static-pkgsite/internal/version"
 )
 
 // Info holds source information about a module, used to generate URLs referring

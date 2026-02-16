@@ -25,9 +25,9 @@ import (
 	"time"
 
 	"golang.org/x/mod/semver"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/fetch"
-	"golang.org/x/pkgsite/internal/proxy"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/fetch"
+	"github.com/wow-look-at-my/static-pkgsite/internal/proxy"
 )
 
 var (
@@ -199,7 +199,7 @@ var tmpl = template.Must(template.New("").Parse(`
 
 package fetch
 
-import "golang.org/x/pkgsite/internal"
+import "github.com/wow-look-at-my/static-pkgsite/internal"
 
 var ZipSignatures = map[string][]internal.Modver{
 {{range .}}

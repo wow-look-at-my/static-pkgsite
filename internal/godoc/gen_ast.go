@@ -11,8 +11,8 @@ import (
 	"go/ast"
 	"log"
 
-	"golang.org/x/pkgsite/internal/godoc"
-	"golang.org/x/pkgsite/internal/godoc/codec"
+	"github.com/wow-look-at-my/static-pkgsite/internal/godoc"
+	"github.com/wow-look-at-my/static-pkgsite/internal/godoc/codec"
 )
 
 func main() {

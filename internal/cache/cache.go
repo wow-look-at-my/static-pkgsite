@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"golang.org/x/pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
 )
 
 // Cache is a Redis-based cache.

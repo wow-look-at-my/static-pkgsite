@@ -16,14 +16,14 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/cookie"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/middleware"
-	"golang.org/x/pkgsite/internal/postgres"
-	"golang.org/x/pkgsite/internal/stdlib"
-	"golang.org/x/pkgsite/internal/testing/sample"
-	"golang.org/x/pkgsite/internal/version"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/cookie"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/middleware"
+	"github.com/wow-look-at-my/static-pkgsite/internal/postgres"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/sample"
+	"github.com/wow-look-at-my/static-pkgsite/internal/version"
 )
 
 func TestPreviousFetchStatusAndResponse(t *testing.T) {

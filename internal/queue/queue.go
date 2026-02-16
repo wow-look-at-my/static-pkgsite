@@ -11,9 +11,9 @@ import (
 	"fmt"
 	"time"
 
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/experiment"
-	"golang.org/x/pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/experiment"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
 )
 
 // A Queue provides an interface for asynchronous scheduling of fetch actions.

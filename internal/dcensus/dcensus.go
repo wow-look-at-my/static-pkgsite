@@ -20,10 +20,10 @@ import (
 	"go.opencensus.io/tag"
 	"go.opencensus.io/trace"
 	"go.opencensus.io/zpages"
-	"golang.org/x/pkgsite/internal/config"
-	"golang.org/x/pkgsite/internal/config/serverconfig"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/config"
+	"github.com/wow-look-at-my/static-pkgsite/internal/config/serverconfig"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
 )
 
 // KeyStatus is a tag key named "status".

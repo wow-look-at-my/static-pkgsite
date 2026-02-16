@@ -21,7 +21,7 @@ import (
 	"strings"
 	"sync"
 
-	"golang.org/x/pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
 )
 
 // GenerateFeatureContexts computes the exported API for the package specified

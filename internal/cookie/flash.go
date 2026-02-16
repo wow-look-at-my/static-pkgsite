@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"time"
 
-	"golang.org/x/pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
 )
 
 // AlternativeModuleFlash indicates the alternative module path that

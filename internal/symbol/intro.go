@@ -5,8 +5,8 @@
 package symbol
 
 import (
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
 )
 
 // IntroducedHistory returns a map of the first version when a symbol name is

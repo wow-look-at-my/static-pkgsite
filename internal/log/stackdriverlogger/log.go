@@ -16,10 +16,10 @@ import (
 	"sync"
 
 	"cloud.google.com/go/logging"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/experiment"
-	"golang.org/x/pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/experiment"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
 )
 
 func init() {

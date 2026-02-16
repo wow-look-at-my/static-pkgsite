@@ -28,14 +28,14 @@ import (
 
 	"golang.org/x/mod/modfile"
 	"golang.org/x/mod/module"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/fuzzy"
-	"golang.org/x/pkgsite/internal/log"
-	"golang.org/x/pkgsite/internal/proxy"
-	"golang.org/x/pkgsite/internal/source"
-	"golang.org/x/pkgsite/internal/stdlib"
-	"golang.org/x/pkgsite/internal/version"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/fuzzy"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/proxy"
+	"github.com/wow-look-at-my/static-pkgsite/internal/source"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal/version"
 	"golang.org/x/tools/go/packages"
 )
 

@@ -15,11 +15,11 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/proxy"
-	"golang.org/x/pkgsite/internal/testenv"
-	"golang.org/x/pkgsite/internal/testing/testhelper"
-	"golang.org/x/pkgsite/internal/version"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/proxy"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testenv"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/testhelper"
+	"github.com/wow-look-at-my/static-pkgsite/internal/version"
 )
 
 func TestDirectoryModuleGetterEmpty(t *testing.T) {

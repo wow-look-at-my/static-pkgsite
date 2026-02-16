@@ -11,9 +11,9 @@ import (
 	"go/token"
 	"strings"
 
-	"golang.org/x/pkgsite/internal/osv"
-	"golang.org/x/pkgsite/internal/stdlib"
-	vers "golang.org/x/pkgsite/internal/version"
+	"github.com/wow-look-at-my/static-pkgsite/internal/osv"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
+	vers "github.com/wow-look-at-my/static-pkgsite/internal/version"
 )
 
 // A Vuln contains information to display about a vulnerability.

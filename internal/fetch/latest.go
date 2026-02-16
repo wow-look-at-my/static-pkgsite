@@ -10,12 +10,12 @@ import (
 	"fmt"
 	"io/fs"
 
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/log"
-	"golang.org/x/pkgsite/internal/proxy"
-	"golang.org/x/pkgsite/internal/stdlib"
-	"golang.org/x/pkgsite/internal/version"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/proxy"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal/version"
 )
 
 // LatestModuleVersions uses the proxy to get information about the latest

@@ -13,12 +13,12 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/safehtml"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/licenses"
-	"golang.org/x/pkgsite/internal/stdlib"
-	"golang.org/x/pkgsite/internal/testing/fakedatasource"
-	"golang.org/x/pkgsite/internal/testing/sample"
-	"golang.org/x/pkgsite/internal/testing/testhelper"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/licenses"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/fakedatasource"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/sample"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/testhelper"
 )
 
 func TestLicenseAnchors(t *testing.T) {

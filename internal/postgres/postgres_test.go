@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"golang.org/x/pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
 )
 
 var acquire func(*testing.T) (*DB, func())

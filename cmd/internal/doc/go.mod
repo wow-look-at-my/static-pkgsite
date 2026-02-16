@@ -1,8 +1,8 @@
-module golang.org/x/pkgsite/cmd/internal/doc
+module github.com/wow-look-at-my/static-pkgsite/cmd/internal/doc
 
 go 1.25.5
 
-require golang.org/x/pkgsite v0.0.0-20260206173353-2a8da3345a36
+require github.com/wow-look-at-my/static-pkgsite v0.0.0-20260206173353-2a8da3345a36
 
 require (
 	github.com/google/licensecheck v0.3.1 // indirect

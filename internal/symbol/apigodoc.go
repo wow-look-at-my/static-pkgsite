@@ -21,9 +21,9 @@ import (
 	"unicode"
 
 	"golang.org/x/mod/semver"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
 )
 
 // ParsePackageAPIInfo parses apiVersions using contents of the specified directory.

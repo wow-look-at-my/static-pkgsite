@@ -23,7 +23,7 @@ import (
 	safe "github.com/google/safehtml"
 	"github.com/google/safehtml/legacyconversions"
 	"github.com/google/safehtml/template"
-	"golang.org/x/pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
 )
 
 /*

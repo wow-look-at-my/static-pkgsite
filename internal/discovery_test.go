@@ -7,7 +7,7 @@ package internal
 import (
 	"testing"
 
-	"golang.org/x/pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
 )
 
 func TestSeriesPathForModule(t *testing.T) {

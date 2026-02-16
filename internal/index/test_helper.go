@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"testing"
 
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/testing/testhelper"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/testhelper"
 )
 
 // SetupTestIndex creates a module index for testing using the given version

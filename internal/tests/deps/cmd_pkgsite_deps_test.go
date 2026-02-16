@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"golang.org/x/pkgsite/internal/testenv"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testenv"
 )
 
 // non-test packages are allowed to depend on licensecheck and safehtml, x/ repos, and markdown.
@@ -19,7 +19,7 @@ var allowedModDeps = map[string]bool{
 	"github.com/google/safehtml":     true,
 	"golang.org/x/mod":               true,
 	"golang.org/x/net":               true,
-	"golang.org/x/pkgsite":           true,
+	"github.com/wow-look-at-my/static-pkgsite":           true,
 	"golang.org/x/sync":              true,
 	"golang.org/x/text":              true,
 	"golang.org/x/tools":             true,
@@ -35,18 +35,18 @@ func TestCmdPkgsiteDeps(t *testing.T) {
 	testenv.MustHaveExecPath(t, "go")
 
 	// First, list all dependencies of pkgsite.
-	out, err := exec.Command("go", "list", "-e", "-deps", "golang.org/x/pkgsite/cmd/pkgsite").Output()
+	out, err := exec.Command("go", "list", "-e", "-deps", "github.com/wow-look-at-my/static-pkgsite/cmd/pkgsite").Output()
 	if err != nil {
 		if ee, ok := err.(*exec.ExitError); ok && len(ee.Stderr) > 0 {
-			t.Fatalf("running go list -test -deps on package golang.org/x/pkgsite/cmd/pkgsite:\n%s", ee.Stderr)
+			t.Fatalf("running go list -test -deps on package github.com/wow-look-at-my/static-pkgsite/cmd/pkgsite:\n%s", ee.Stderr)
 		}
-		t.Fatalf("running go list -test -deps on package golang.org/x/pkgsite/cmd/pkgsite: %v", err)
+		t.Fatalf("running go list -test -deps on package github.com/wow-look-at-my/static-pkgsite/cmd/pkgsite: %v", err)
 
 	}
 	pkgs := strings.Fields(string(out))
 	for _, pkg := range pkgs {
 		// Filter to only the dependencies that are in the pkgsite module.
-		if !strings.HasPrefix(pkg, "golang.org/x/pkgsite") {
+		if !strings.HasPrefix(pkg, "github.com/wow-look-at-my/static-pkgsite") {
 			continue
 		}
 

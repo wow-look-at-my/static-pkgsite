@@ -16,11 +16,11 @@ import (
 	"sort"
 	"strings"
 
-	"golang.org/x/pkgsite/internal/fetch"
-	"golang.org/x/pkgsite/internal/frontend"
-	"golang.org/x/pkgsite/internal/log"
-	"golang.org/x/pkgsite/static"
-	thirdparty "golang.org/x/pkgsite/third_party"
+	"github.com/wow-look-at-my/static-pkgsite/internal/fetch"
+	"github.com/wow-look-at-my/static-pkgsite/internal/frontend"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/static"
+	thirdparty "github.com/wow-look-at-my/static-pkgsite/third_party"
 )
 
 // cspMeta is the Content-Security-Policy meta tag injected into every generated

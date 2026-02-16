@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
-	"golang.org/x/pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
 )
 
 func TestGetVersions(t *testing.T) {

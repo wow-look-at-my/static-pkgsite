@@ -5,7 +5,7 @@
 package internal
 
 import (
-	"golang.org/x/pkgsite/internal/licenses"
+	"github.com/wow-look-at-my/static-pkgsite/internal/licenses"
 )
 
 // UnitMeta represents metadata about a unit.

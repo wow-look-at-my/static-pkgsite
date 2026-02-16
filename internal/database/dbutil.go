@@ -13,9 +13,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"golang.org/x/pkgsite/internal/config/serverconfig"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/testing/testhelper"
+	"github.com/wow-look-at-my/static-pkgsite/internal/config/serverconfig"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/testhelper"
 
 	// imported to register the postgres migration driver
 	"github.com/golang-migrate/migrate/v4"

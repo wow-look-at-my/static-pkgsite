@@ -14,9 +14,9 @@ import (
 	"time"
 
 	"golang.org/x/mod/semver"
-	"golang.org/x/pkgsite/internal/proxy"
-	"golang.org/x/pkgsite/internal/testing/testhelper"
-	"golang.org/x/pkgsite/internal/version"
+	"github.com/wow-look-at-my/static-pkgsite/internal/proxy"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/testhelper"
+	"github.com/wow-look-at-my/static-pkgsite/internal/version"
 )
 
 // Server represents a proxy server containing the specified modules.

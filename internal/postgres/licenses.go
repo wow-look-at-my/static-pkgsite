@@ -15,10 +15,10 @@ import (
 	"strings"
 
 	"github.com/lib/pq"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/licenses"
-	"golang.org/x/pkgsite/internal/middleware/stats"
-	"golang.org/x/pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/licenses"
+	"github.com/wow-look-at-my/static-pkgsite/internal/middleware/stats"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
 )
 
 func (db *DB) getLicenses(ctx context.Context, fullPath, modulePath string, unitID int) (_ []*licenses.License, err error) {

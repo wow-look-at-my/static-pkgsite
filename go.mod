@@ -1,4 +1,4 @@
-module golang.org/x/pkgsite
+module github.com/wow-look-at-my/static-pkgsite
 
 go 1.25.5
 

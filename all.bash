@@ -266,9 +266,9 @@ EOUSAGE
 # (They time out with -race.)
 declare -A no_race
 no_race=(
-  [golang.org/x/pkgsite/internal/frontend]=1
-  [golang.org/x/pkgsite/internal/worker]=1
-  [golang.org/x/pkgsite/internal/testing/integration]=1
+  [github.com/wow-look-at-my/static-pkgsite/internal/frontend]=1
+  [github.com/wow-look-at-my/static-pkgsite/internal/worker]=1
+  [github.com/wow-look-at-my/static-pkgsite/internal/testing/integration]=1
 )
 
 main() {

@@ -14,10 +14,10 @@ import (
 	"time"
 
 	"github.com/google/safehtml/template"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/testing/fakedatasource"
-	"golang.org/x/pkgsite/static"
-	thirdparty "golang.org/x/pkgsite/third_party"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/fakedatasource"
+	"github.com/wow-look-at-my/static-pkgsite/static"
+	thirdparty "github.com/wow-look-at-my/static-pkgsite/third_party"
 )
 
 type testModule struct {

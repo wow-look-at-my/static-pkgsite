@@ -21,13 +21,13 @@ import (
 
 	"go.opencensus.io/plugin/ochttp"
 	"golang.org/x/mod/semver"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/frontend/client"
-	"golang.org/x/pkgsite/internal/frontend/versions"
-	"golang.org/x/pkgsite/internal/proxy"
-	"golang.org/x/pkgsite/internal/symbol"
-	"golang.org/x/pkgsite/internal/version"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/frontend/client"
+	"github.com/wow-look-at-my/static-pkgsite/internal/frontend/versions"
+	"github.com/wow-look-at-my/static-pkgsite/internal/proxy"
+	"github.com/wow-look-at-my/static-pkgsite/internal/symbol"
+	"github.com/wow-look-at-my/static-pkgsite/internal/version"
 )
 
 var (

@@ -15,10 +15,10 @@ import (
 	"net/url"
 	"os"
 
-	"golang.org/x/pkgsite/internal/auth"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/frontend"
-	"golang.org/x/pkgsite/internal/frontend/versions"
+	"github.com/wow-look-at-my/static-pkgsite/internal/auth"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/frontend"
+	"github.com/wow-look-at-my/static-pkgsite/internal/frontend/versions"
 )
 
 // A Client for interacting with the frontend. This is only used for tests.

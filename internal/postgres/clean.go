@@ -10,8 +10,8 @@ import (
 	"context"
 	"database/sql"
 
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
 )
 
 // GetModuleVersionsToClean returns module versions that can be removed from the database.

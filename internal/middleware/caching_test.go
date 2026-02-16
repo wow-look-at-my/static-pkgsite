@@ -22,7 +22,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/go-cmp/cmp"
 	"go.opencensus.io/stats/view"
-	"golang.org/x/pkgsite/internal/config"
+	"github.com/wow-look-at-my/static-pkgsite/internal/config"
 )
 
 func TestCache(t *testing.T) {

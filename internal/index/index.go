@@ -17,8 +17,8 @@ import (
 
 	"go.opencensus.io/plugin/ochttp"
 	"golang.org/x/net/context/ctxhttp"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
 )
 
 // A Client is used by the worker service to communicate with the module index.

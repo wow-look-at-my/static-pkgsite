@@ -10,7 +10,7 @@ import (
 	"go/token"
 	"strings"
 
-	"golang.org/x/pkgsite/internal/godoc/dochtml"
+	"github.com/wow-look-at-my/static-pkgsite/internal/godoc/dochtml"
 )
 
 var ErrTooLarge = dochtml.ErrTooLarge

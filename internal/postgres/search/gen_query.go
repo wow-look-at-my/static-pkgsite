@@ -12,8 +12,8 @@ import (
 	"go/format"
 	"os"
 
-	"golang.org/x/pkgsite/internal/log"
-	"golang.org/x/pkgsite/internal/postgres/search"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/postgres/search"
 )
 
 const filename = "query.gen.go"

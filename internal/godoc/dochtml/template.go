@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/safehtml"
 	"github.com/google/safehtml/template"
-	"golang.org/x/pkgsite/internal/godoc/dochtml/internal/render"
+	"github.com/wow-look-at-my/static-pkgsite/internal/godoc/dochtml/internal/render"
 )
 
 var (

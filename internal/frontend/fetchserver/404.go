@@ -16,17 +16,17 @@ import (
 	"time"
 
 	"github.com/google/safehtml/template/uncheckedconversions"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/cookie"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/experiment"
-	"golang.org/x/pkgsite/internal/frontend/page"
-	"golang.org/x/pkgsite/internal/frontend/serrors"
-	"golang.org/x/pkgsite/internal/frontend/urlinfo"
-	"golang.org/x/pkgsite/internal/frontend/versions"
-	"golang.org/x/pkgsite/internal/log"
-	"golang.org/x/pkgsite/internal/stdlib"
-	"golang.org/x/pkgsite/internal/version"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/cookie"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/experiment"
+	"github.com/wow-look-at-my/static-pkgsite/internal/frontend/page"
+	"github.com/wow-look-at-my/static-pkgsite/internal/frontend/serrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/frontend/urlinfo"
+	"github.com/wow-look-at-my/static-pkgsite/internal/frontend/versions"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal/version"
 )
 
 // ServePathNotFoundPage serves a 404 page for the requested path, or redirects
