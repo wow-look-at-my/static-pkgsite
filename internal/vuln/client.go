@@ -15,10 +15,10 @@ import (
 	"sync"
 	"time"
 
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/log"
-	"golang.org/x/pkgsite/internal/osv"
-	"golang.org/x/pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/osv"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
 	"golang.org/x/sync/errgroup"
 )
 

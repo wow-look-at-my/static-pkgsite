@@ -10,10 +10,10 @@ import (
 	"fmt"
 
 	"github.com/Masterminds/squirrel"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/database"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/middleware/stats"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/database"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/middleware/stats"
 )
 
 // getPackageSymbols returns all of the symbols for a given package path and module path.

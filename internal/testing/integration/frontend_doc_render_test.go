@@ -15,8 +15,8 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"golang.org/x/pkgsite/internal/experiment"
-	"golang.org/x/pkgsite/internal/postgres"
+	"github.com/wow-look-at-my/static-pkgsite/internal/experiment"
+	"github.com/wow-look-at-my/static-pkgsite/internal/postgres"
 )
 
 // Test that the worker saves the information needed to render

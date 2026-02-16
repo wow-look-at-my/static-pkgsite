@@ -10,9 +10,9 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/testing/fakedatasource"
-	"golang.org/x/pkgsite/internal/testing/sample"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/fakedatasource"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/sample"
 )
 
 func TestFetchImportsDetails(t *testing.T) {

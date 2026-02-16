@@ -15,11 +15,11 @@ import (
 	"net/http"
 	"time"
 
-	"golang.org/x/pkgsite/cmd/internal/pkgsite"
-	"golang.org/x/pkgsite/internal/browser"
-	ilog "golang.org/x/pkgsite/internal/log"
-	"golang.org/x/pkgsite/internal/middleware/timeout"
-	"golang.org/x/pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/cmd/internal/pkgsite"
+	"github.com/wow-look-at-my/static-pkgsite/internal/browser"
+	ilog "github.com/wow-look-at-my/static-pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/middleware/timeout"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
 )
 
 var (

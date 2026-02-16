@@ -11,8 +11,8 @@ import (
 	"strconv"
 
 	"github.com/google/safehtml"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/licenses"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/licenses"
 )
 
 // License contains information used for a single license section.

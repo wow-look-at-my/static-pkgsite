@@ -8,7 +8,7 @@
 //
 // To install, run:
 //
-//	go install golang.org/x/pkgsite/cmd/pkgsite@latest
+//	go install github.com/wow-look-at-my/static-pkgsite/cmd/pkgsite@latest
 //
 // With no arguments, pkgsite will serve docs for main modules relative to the
 // current directory, i.e. the modules listed by `go list -m`. This is
@@ -60,12 +60,12 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/pkgsite/cmd/internal/pkgsite"
-	"golang.org/x/pkgsite/internal/browser"
-	"golang.org/x/pkgsite/internal/log"
-	"golang.org/x/pkgsite/internal/middleware/timeout"
-	"golang.org/x/pkgsite/internal/proxy"
-	"golang.org/x/pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/cmd/internal/pkgsite"
+	"github.com/wow-look-at-my/static-pkgsite/internal/browser"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/middleware/timeout"
+	"github.com/wow-look-at-my/static-pkgsite/internal/proxy"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
 )
 
 const defaultAddr = "localhost:8080" // default webserver address

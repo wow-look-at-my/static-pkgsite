@@ -15,10 +15,10 @@ import (
 	"testing"
 
 	"golang.org/x/net/html"
-	"golang.org/x/pkgsite/internal/proxy/proxytest"
-	"golang.org/x/pkgsite/internal/testenv"
-	"golang.org/x/pkgsite/internal/testing/htmlcheck"
-	"golang.org/x/pkgsite/internal/testing/testhelper"
+	"github.com/wow-look-at-my/static-pkgsite/internal/proxy/proxytest"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testenv"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/htmlcheck"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/testhelper"
 )
 
 var (

@@ -9,7 +9,7 @@
 package somepkg
 
 import (
-	"golang.org/x/pkgsite/internal/godoc/codec"
+	"github.com/wow-look-at-my/static-pkgsite/internal/godoc/codec"
 )
 
 func encode_map_string_bool(e *codec.Encoder, m map[string]bool) {

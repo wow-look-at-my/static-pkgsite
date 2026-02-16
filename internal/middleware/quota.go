@@ -20,8 +20,8 @@ import (
 	"go.opencensus.io/stats"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/tag"
-	"golang.org/x/pkgsite/internal/config"
-	"golang.org/x/pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/config"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
 )
 
 var (

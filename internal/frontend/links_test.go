@@ -14,7 +14,7 @@ import (
 	"os"
 	"testing"
 
-	"golang.org/x/pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
 )
 
 func expectedCodeWikiURL(baseURL, path string) string {

@@ -13,8 +13,8 @@ import (
 	"testing"
 
 	"golang.org/x/mod/semver"
-	"golang.org/x/pkgsite/internal/testenv"
-	"golang.org/x/pkgsite/internal/version"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testenv"
+	"github.com/wow-look-at-my/static-pkgsite/internal/version"
 )
 
 var (

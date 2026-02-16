@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"golang.org/x/pkgsite/internal/config"
-	"golang.org/x/pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/config"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
 )
 
 // ErrorReporting returns a middleware that reports any server errors using the

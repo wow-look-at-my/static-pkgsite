@@ -7,9 +7,9 @@ package postgres
 import (
 	"context"
 
-	"golang.org/x/pkgsite/internal/database"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/stdlib"
+	"github.com/wow-look-at-my/static-pkgsite/internal/database"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/stdlib"
 )
 
 // GetStdlibPathsWithSuffix returns information about all paths in the latest version of the standard

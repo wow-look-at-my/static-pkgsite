@@ -10,7 +10,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"golang.org/x/pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
 )
 
 // ReadFileLines reads and returns the lines from a file.

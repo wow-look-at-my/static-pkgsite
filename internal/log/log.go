@@ -13,7 +13,7 @@ import (
 	"strings"
 	"sync"
 
-	"golang.org/x/pkgsite/internal/experiment"
+	"github.com/wow-look-at-my/static-pkgsite/internal/experiment"
 )
 
 type Severity int

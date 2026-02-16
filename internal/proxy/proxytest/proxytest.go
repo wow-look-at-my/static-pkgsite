@@ -11,8 +11,8 @@ import (
 	"testing"
 
 	"golang.org/x/mod/modfile"
-	"golang.org/x/pkgsite/internal/proxy"
-	"golang.org/x/pkgsite/internal/testing/testhelper"
+	"github.com/wow-look-at-my/static-pkgsite/internal/proxy"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/testhelper"
 	"golang.org/x/tools/txtar"
 )
 

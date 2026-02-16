@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"testing"
 
-	"golang.org/x/pkgsite/internal/postgres"
+	"github.com/wow-look-at-my/static-pkgsite/internal/postgres"
 )
 
 func TestFrontendFetchForMasterVersion(t *testing.T) {

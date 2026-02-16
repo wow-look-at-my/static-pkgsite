@@ -37,7 +37,7 @@ import (
 	"github.com/google/licensecheck"
 	"golang.org/x/mod/module"
 	modzip "golang.org/x/mod/zip"
-	"golang.org/x/pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
 )
 
 //go:generate rm -f exceptions.gen.go

@@ -20,8 +20,8 @@ import (
 
 	"golang.org/x/mod/module"
 	"golang.org/x/net/context/ctxhttp"
-	"golang.org/x/pkgsite/internal/derrors"
-	"golang.org/x/pkgsite/internal/version"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/version"
 )
 
 // A Client is used by the fetch service to communicate with a module

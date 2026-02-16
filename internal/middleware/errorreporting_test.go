@@ -10,7 +10,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"golang.org/x/pkgsite/internal/config"
+	"github.com/wow-look-at-my/static-pkgsite/internal/config"
 )
 
 func TestErrorReporting(t *testing.T) {

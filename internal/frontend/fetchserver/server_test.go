@@ -16,11 +16,11 @@ import (
 	"time"
 
 	"golang.org/x/net/html"
-	"golang.org/x/pkgsite/internal"
-	"golang.org/x/pkgsite/internal/postgres"
-	"golang.org/x/pkgsite/internal/testing/htmlcheck"
-	"golang.org/x/pkgsite/internal/testing/pagecheck"
-	"golang.org/x/pkgsite/internal/testing/sample"
+	"github.com/wow-look-at-my/static-pkgsite/internal"
+	"github.com/wow-look-at-my/static-pkgsite/internal/postgres"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/htmlcheck"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/pagecheck"
+	"github.com/wow-look-at-my/static-pkgsite/internal/testing/sample"
 )
 
 const pseudoVersion = "v0.0.0-20140414041502-123456789012"

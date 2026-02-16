@@ -12,7 +12,7 @@ import (
 	"go.opencensus.io/stats"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/tag"
-	"golang.org/x/pkgsite/internal/postgres"
+	"github.com/wow-look-at-my/static-pkgsite/internal/postgres"
 )
 
 var (

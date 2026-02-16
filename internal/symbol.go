@@ -9,7 +9,7 @@ import (
 	"sort"
 
 	"golang.org/x/mod/semver"
-	"golang.org/x/pkgsite/internal/derrors"
+	"github.com/wow-look-at-my/static-pkgsite/internal/derrors"
 )
 
 // SymbolSection is the documentation section where a symbol appears.

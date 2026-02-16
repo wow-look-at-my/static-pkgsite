@@ -12,7 +12,7 @@ import (
 	"sync"
 
 	"go.opencensus.io/trace"
-	"golang.org/x/pkgsite/internal/log"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
 )
 
 type debugTraceExporter struct {

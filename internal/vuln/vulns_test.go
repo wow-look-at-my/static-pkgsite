@@ -11,7 +11,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"golang.org/x/pkgsite/internal/osv"
+	"github.com/wow-look-at-my/static-pkgsite/internal/osv"
 )
 
 func TestVulnsForPackage(t *testing.T) {

@@ -19,11 +19,11 @@ import (
 	"go.opencensus.io/stats"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/tag"
-	icache "golang.org/x/pkgsite/internal/cache"
-	"golang.org/x/pkgsite/internal/config"
-	"golang.org/x/pkgsite/internal/cookie"
-	"golang.org/x/pkgsite/internal/dcensus"
-	"golang.org/x/pkgsite/internal/log"
+	icache "github.com/wow-look-at-my/static-pkgsite/internal/cache"
+	"github.com/wow-look-at-my/static-pkgsite/internal/config"
+	"github.com/wow-look-at-my/static-pkgsite/internal/cookie"
+	"github.com/wow-look-at-my/static-pkgsite/internal/dcensus"
+	"github.com/wow-look-at-my/static-pkgsite/internal/log"
 )
 
 var (
