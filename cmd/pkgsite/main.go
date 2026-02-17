@@ -75,7 +75,7 @@ var (
 	goRepoPath = flag.String("gorepo", "", "path to Go repo on local filesystem")
 	useProxy   = flag.Bool("proxy", false, "fetch from GOPROXY if not found locally")
 	openFlag   = flag.Bool("open", false, "open a browser window to the server's address")
-	outDir     = flag.String("out", "", "output directory for static site generation (generates static HTML/CSS/JS instead of starting a server)")
+	outDir   = flag.String("out", "", "output directory for static site generation (generates static HTML/CSS/JS instead of starting a server)")
 	// other flags are bound to ServerConfig below
 )
 

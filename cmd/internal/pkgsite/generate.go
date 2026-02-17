@@ -12,9 +12,12 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"golang.org/x/net/html"
 
 	"github.com/wow-look-at-my/static-pkgsite/internal/fetch"
 	"github.com/wow-look-at-my/static-pkgsite/internal/frontend"
@@ -23,10 +26,9 @@ import (
 	thirdparty "github.com/wow-look-at-my/static-pkgsite/third_party"
 )
 
-// cspMeta is the Content-Security-Policy meta tag injected into every generated
-// HTML page. It forbids all off-domain resource loading.
-const cspMeta = `<meta http-equiv="Content-Security-Policy" content="` +
-	`default-src 'self'; ` +
+// cspContent is the Content-Security-Policy directive value injected into
+// every generated HTML page.
+const cspContent = `default-src 'self'; ` +
 	`script-src 'self' 'unsafe-inline'; ` +
 	`style-src 'self' 'unsafe-inline'; ` +
 	`img-src 'self' data:; ` +
@@ -34,12 +36,15 @@ const cspMeta = `<meta http-equiv="Content-Security-Policy" content="` +
 	`connect-src 'none'; ` +
 	`frame-src 'none'; ` +
 	`object-src 'none'; ` +
-	`base-uri 'none'` +
-	`">`
+	`base-uri 'none'`
 
 // GenerateStaticSite generates a fully static HTML/CSS/JS site into outDir
 // using the same server infrastructure as the dynamic mode. The output can be
 // served by any static file server with no Go backend required.
+//
+// All absolute URL references in the generated HTML, CSS, and JS are converted
+// to relative paths so the site works when served from any directory, including
+// GitHub Pages project subpaths.
 func GenerateStaticSite(ctx context.Context, serverCfg ServerConfig, outDir string) error {
 	// Build the server and get the getters/modules for package enumeration.
 	result, err := buildServerAndGetters(ctx, serverCfg)
@@ -92,7 +97,7 @@ func GenerateStaticSite(ctx context.Context, serverCfg ServerConfig, outDir stri
 		}
 	}
 
-	// Copy static assets.
+	// Copy static assets, converting absolute paths to relative in CSS/JS.
 	fmt.Fprintf(os.Stderr, "Copying static assets...\n")
 	if err := copyEmbeddedFS(static.FS, ".", filepath.Join(outDir, "static")); err != nil {
 		return fmt.Errorf("copying static assets: %w", err)
@@ -140,7 +145,8 @@ func enumerateUnitPaths(ctx context.Context, getters []fetch.ModuleGetter, modul
 
 // renderAndWrite renders the given URL path using the mux and writes the
 // response body to the appropriate file under outDir. For HTML responses,
-// it injects a strict Content-Security-Policy meta tag.
+// it injects a strict Content-Security-Policy meta tag and converts absolute
+// URL paths to relative paths.
 func renderAndWrite(mux *http.ServeMux, urlPath, outDir string) error {
 	return renderAndWriteN(mux, urlPath, outDir, 0)
 }
@@ -168,10 +174,14 @@ func renderAndWriteN(mux *http.ServeMux, urlPath, outDir string, depth int) erro
 
 	body := w.Body.Bytes()
 
-	// Inject CSP meta tag into HTML responses.
+	// For HTML responses, parse the DOM, inject CSP, and relativize paths.
 	contentType := w.Header().Get("Content-Type")
 	if strings.Contains(contentType, "text/html") || contentType == "" {
-		body = injectCSP(body)
+		processed, err := processHTML(body, urlPath)
+		if err != nil {
+			return fmt.Errorf("processing HTML for %s: %w", urlPath, err)
+		}
+		body = processed
 	}
 
 	// Determine output file path.
@@ -199,51 +209,153 @@ func urlPathToFilePath(urlPath, outDir string) string {
 	return filepath.Join(outDir, filepath.FromSlash(clean), "index.html")
 }
 
-// injectCSP inserts a Content-Security-Policy meta tag into the <head> of an
-// HTML document. This ensures that even if the static site is served without
-// server-side headers, no off-domain resources can be loaded.
-func injectCSP(html []byte) []byte {
-	// Insert after <head> (or <head ...>).
-	idx := bytes.Index(html, []byte("<head>"))
-	if idx >= 0 {
-		insertion := idx + len("<head>")
-		return bytes.Join([][]byte{
-			html[:insertion],
-			[]byte("\n    " + cspMeta),
-			html[insertion:],
-		}, nil)
+// relativePrefix returns the "../" prefix needed to navigate from a page at
+// urlPath back to the site root. Pages are written as directory/index.html,
+// so /about becomes /about/index.html (depth 1), /net/http becomes
+// /net/http/index.html (depth 2), etc.
+//
+// Examples:
+//
+//	"/"           → "./"
+//	"/about"      → "../"
+//	"/net/http"   → "../../"
+func relativePrefix(urlPath string) string {
+	clean := strings.TrimPrefix(urlPath, "/")
+	if clean == "" {
+		return "./"
 	}
-	// Try <head with attributes.
-	idx = bytes.Index(html, []byte("<head "))
-	if idx >= 0 {
-		// Find the closing >.
-		end := bytes.IndexByte(html[idx:], '>')
-		if end >= 0 {
-			insertion := idx + end + 1
-			return bytes.Join([][]byte{
-				html[:insertion],
-				[]byte("\n    " + cspMeta),
-				html[insertion:],
-			}, nil)
+	depth := strings.Count(clean, "/") + 1
+	return strings.Repeat("../", depth)
+}
+
+// processHTML parses the HTML document, injects a Content-Security-Policy
+// meta tag into <head>, and rewrites all absolute URL paths to relative
+// paths based on the page's depth in the URL hierarchy.
+func processHTML(content []byte, urlPath string) ([]byte, error) {
+	prefix := relativePrefix(urlPath)
+
+	doc, err := html.Parse(bytes.NewReader(content))
+	if err != nil {
+		return nil, fmt.Errorf("parsing HTML: %w", err)
+	}
+
+	walkNodes(doc, prefix)
+
+	var buf bytes.Buffer
+	if err := html.Render(&buf, doc); err != nil {
+		return nil, fmt.Errorf("rendering HTML: %w", err)
+	}
+	return buf.Bytes(), nil
+}
+
+// walkNodes recursively walks the HTML node tree, rewriting absolute URL
+// attribute values to relative paths and injecting the CSP meta tag.
+func walkNodes(n *html.Node, prefix string) {
+	if n.Type == html.ElementNode {
+		// Rewrite URL-valued attributes from absolute to relative paths.
+		for i, a := range n.Attr {
+			if isURLAttr(a.Key) && strings.HasPrefix(a.Val, "/") && !strings.HasPrefix(a.Val, "//") {
+				n.Attr[i].Val = prefix + a.Val[1:]
+			}
+		}
+
+		// Inject CSP <meta> as the first child of <head>.
+		if n.Data == "head" {
+			meta := &html.Node{
+				Type: html.ElementNode,
+				Data: "meta",
+				Attr: []html.Attribute{
+					{Key: "http-equiv", Val: "Content-Security-Policy"},
+					{Key: "content", Val: cspContent},
+				},
+			}
+			n.InsertBefore(meta, n.FirstChild)
+		}
+
+		// Rewrite absolute paths inside inline <script> text.
+		if n.Data == "script" {
+			for c := n.FirstChild; c != nil; c = c.NextSibling {
+				if c.Type == html.TextNode {
+					c.Data = relativizeScriptText(c.Data, prefix)
+				}
+			}
 		}
 	}
-	return html
+
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		walkNodes(c, prefix)
+	}
+}
+
+// isURLAttr reports whether the given attribute name typically contains a URL.
+func isURLAttr(attr string) bool {
+	switch attr {
+	case "href", "src", "action", "poster", "data":
+		return true
+	}
+	return false
+}
+
+// relativizeScriptText rewrites absolute path string literals inside inline
+// JavaScript. This handles patterns like loadScript("/static/...").
+func relativizeScriptText(script, prefix string) string {
+	for _, dir := range []string{"/static/", "/third_party/"} {
+		script = strings.ReplaceAll(script, `"`+dir, `"`+prefix+dir[1:])
+		script = strings.ReplaceAll(script, `'`+dir, `'`+prefix+dir[1:])
+	}
+	return script
+}
+
+// absoluteToRelativeAsset converts absolute URL path references in CSS and JS
+// files to relative paths. The file's path within the output directory
+// determines the depth.
+//
+// For example, static/frontend/homepage/homepage.css references
+// /static/shared/icon/search.svg. Since the CSS file is 3 levels deep
+// (static/frontend/homepage/), the result is ../../../static/shared/icon/search.svg.
+func absoluteToRelativeAsset(content []byte, filePath string) []byte {
+	// Compute depth: number of directory separators in the file's path
+	// gives us how many "../" we need to reach the site root.
+	dir := path.Dir(filePath)
+	depth := 0
+	if dir != "." {
+		depth = strings.Count(dir, "/") + 1
+	}
+	prefix := strings.Repeat("../", depth)
+
+	s := string(content)
+	for _, dir := range []string{"/static/", "/third_party/"} {
+		s = strings.ReplaceAll(s, `"`+dir, `"`+prefix+dir[1:])
+		s = strings.ReplaceAll(s, `'`+dir, `'`+prefix+dir[1:])
+		// CSS url() without quotes: url(/static/...)
+		s = strings.ReplaceAll(s, "("+dir, "("+prefix+dir[1:])
+	}
+	return []byte(s)
 }
 
 // copyEmbeddedFS recursively copies all files from an embedded filesystem
-// to a destination directory on disk.
+// to a destination directory on disk. CSS and JS files have their absolute
+// URL path references converted to relative paths.
 func copyEmbeddedFS(fsys fs.FS, root, destDir string) error {
-	return fs.WalkDir(fsys, root, func(path string, d fs.DirEntry, err error) error {
+	return fs.WalkDir(fsys, root, func(fpath string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
-		dest := filepath.Join(destDir, filepath.FromSlash(path))
+		dest := filepath.Join(destDir, filepath.FromSlash(fpath))
 		if d.IsDir() {
 			return os.MkdirAll(dest, 0o755)
 		}
-		data, err := fs.ReadFile(fsys, path)
+		data, err := fs.ReadFile(fsys, fpath)
 		if err != nil {
 			return err
+		}
+		ext := filepath.Ext(fpath)
+		if ext == ".css" || ext == ".js" {
+			// The file's path relative to the site root includes the
+			// top-level directory name (e.g., "static/" or "third_party/").
+			// We derive this from destDir's base name + the embedded path.
+			siteRelPath := path.Join(filepath.Base(destDir), fpath)
+			data = absoluteToRelativeAsset(data, siteRelPath)
 		}
 		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 			return err
