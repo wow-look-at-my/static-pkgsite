@@ -5,6 +5,7 @@
 package pkgsite
 
 import (
+	"html"
 	"strings"
 	"testing"
 )
@@ -125,22 +126,22 @@ func TestAbsoluteToRelativeAsset(t *testing.T) {
 			want:     `import "../../../../static/frontend/frontend.js"`,
 		},
 		{
-			name:     "single-quoted path",
+			name:     "single-quoted path at depth 2",
 			content:  `@import '/static/shared/shared.css'`,
 			filePath: "static/frontend/frontend.css",
-			want:     `@import '../../../static/shared/shared.css'`,
+			want:     `@import '../../static/shared/shared.css'`,
 		},
 		{
-			name:     "third_party reference",
+			name:     "third_party reference at depth 2",
 			content:  `url(/third_party/fonts/font.woff2)`,
 			filePath: "static/frontend/frontend.css",
-			want:     `url(../../../third_party/fonts/font.woff2)`,
+			want:     `url(../../third_party/fonts/font.woff2)`,
 		},
 		{
 			name:     "file at root level",
 			content:  `url(/static/foo.png)`,
 			filePath: "style.css",
-			want:     `url(../static/foo.png)`,
+			want:     `url(static/foo.png)`,
 		},
 		{
 			name:     "no matching paths",
@@ -232,7 +233,8 @@ func TestProcessHTML(t *testing.T) {
 			urlPath: "/",
 			checks: []func(t *testing.T, result string){
 				contains(`http-equiv="Content-Security-Policy"`),
-				contains(`content="` + cspContent + `"`),
+				// html.Render escapes single quotes as &#39; in attribute values.
+				contains(`content="` + html.EscapeString(cspContent) + `"`),
 			},
 		},
 		{
